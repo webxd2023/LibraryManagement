@@ -499,6 +499,119 @@ def vercode(request):
     else:
         return HttpResponse('method error')
 
+def classify_info(request):
+    if request.method == 'GET':
+        # jwt_token=request.META.get("HTTP_AUTHORIZATION")
+        # auth=decode_token(jwt_token)
+        auth = [False,True]
+        # auth[0]=False
+        print(auth)
+        if auth[0]!=True:
+            page = request.GET.get('page')
+            rows = request.GET.get('rows')
+            classify_id = request.GET.get('id')
+            classify_name = request.GET.get('classify_name')  # 分类名称
+            classify_status = request.GET.get('classify_status')   # 分类状态
+            delete_status = 1
+            field=mysql_server.column_name('classify_info')
+            if (not page)or (not rows):
+                page=0
+                rows=10
+            page = int(page) * int(rows)
+            sqlList = []
+            if classify_id:
+                sqlList.append(f'and id = {classify_id} ')
+            if classify_name:
+                sqlList.append(f'and classify_name = "{classify_name}" ')
+            if classify_status:
+                sqlList.append(f'and classify_status = "{classify_status}" ')
+            if delete_status:
+                sqlList.append(f'and delete_status = "{delete_status}" ')
+            print(sqlList)
+            data = []
+            valst = []
+            keylst = []
+            sqlText=sql_algorithm.sqlSplicing('classify_info',sqlList,page,rows)
+            countsql=sqlText.get('count_sql')
+            sql=sqlText.get('sql')
+            loger.info(f'sql:{sql}')
+            loger.info(f'countsql:{countsql}')
+            datanum=mysql_server.get_user_info_list(countsql)[0][0]
+            sqldata=mysql_server.get_user_info_list(sql)
+            for i in range(len(sqldata)):
+                dds = sqldata[i]
+                for ix in range(len(dds)):
+                   vals = dds[ix]
+                   valst.append(vals)
+                   keylst.append(field[ix])
+                kvjson=dict(zip(keylst,valst))
+                data.append(kvjson)
+            itemzise = len(data)
+            infos = {'code': 200, 'msg': '获取成功','itemzise': itemzise, 'datazise':datanum,'data': data}
+        else:
+            infos={'code':401,'msg':'登录已过期','data':'null'}
+        return JsonResponse(infos)
+    elif request.method == 'POST':
+        # jwt_token = request.META.get("HTTP_AUTHORIZATION")
+        # auth = decode_token(jwt_token)
+        auth = [False, True]
+        if auth[0] != True:
+            body = request.body
+            json_body = eval(body.decode())
+            classify_name = json_body.get('classify_name')
+            ntime = nowTime()
+            sql = f"INSERT INTO classify_info VALUES (null,'{classify_name}',1,1);"
+            loger.info(f'insertsql:{sql}')
+            classify_id = mysql_server.add_user_info(sql)
+            info = {'code': 200, 'msg': '添加成功',
+                    'book_info': {'id': classify_id, 'classify_name': classify_name}}
+            return JsonResponse(info)
+    elif request.method == "PUT":
+        # jwt_token = request.META.get("HTTP_AUTHORIZATION")
+        # auth = decode_token(jwt_token)
+        auth = [True, True]
+        if auth[0] == True:
+            body = request.body
+            json_body = eval(body.decode())
+            id = json_body.get('id')
+            classify_name = json_body.get('classify_name')
+            classify_status = json_body.get('classify_status')
+            sql = f"update classify_info set  classify_name = '{classify_name}',classify_status='{classify_status}' where id = {id} ;"
+            loger.info(f'updatesql:{sql}')
+            re = mysql_server.com_up(sql)
+        else:
+            re = {'code': 401, 'msg': '登录已过期', 'data': 'null'}
+        return JsonResponse(re)
+    if request.method  == 'DELETE':
+        # jwt_token = request.META.get("HTTP_AUTHORIZATION")
+        # auth = decode_token(jwt_token)
+        auth = [True, True]
+        if auth[0]==True:
+            body=request.body
+            if not body:
+                return JsonResponse({'code': 403, 'msg': '未收到参数', 'data': 'null'})
+            else:
+
+                json_body = eval(body.decode())
+                if not json_body.get("id"):
+                    return JsonResponse({'code': 403, 'msg': '分类id为空', 'data': 'null'})
+                else:
+                    id = json_body.get("id")
+                    sql = f"update classify_info set  delete_status = 2 where id = {id} ;"
+                    loger.info(f'deletesql:{sql}')
+                    re=mysql_server.delsql(sql)
+        else:
+            re={'code':401,'msg':'登录已过期','data':'null'}
+        return JsonResponse(re)
+    else:
+        return HttpResponse('method error')
+def vercode(request):
+    if request.method == 'GET':
+        verifCode=vvcode()
+        return JsonResponse({'code': 200, 'verCode': verifCode})
+    else:
+        return HttpResponse('method error')
+
 def admin_login(request):
     if request.method  == 'POST':
         body=request.body.decode('utf-8')
@@ -522,20 +635,30 @@ def admin_login(request):
             else:
                 key = conf.KEY
                 try:
-                    sql = f"select id,password,username from users where  user = '{user}';"
-                    userinfo = mysql_server.get_user_info_list(sql)[0]
-                    user_id=userinfo[0]
-                    name=userinfo[2]
-                    dbpwd=decrypt(key,userinfo[1])
-                    print(dbpwd)
-                    if pwd==dbpwd[1]:
-                        jwt_token = encode_token(user_id, name)
-                        info={'code': 200, 'msg': f'登录成功','jwt_token':jwt_token,'user_info':{'user_id':user_id,'user_name':name,}}
+                    usersql = f"select user from users where  user = '{user}' ;"
+                    loger.info(f'sql:{usersql}')
+                    userinfo = mysql_server.get_user_info_list(usersql)
+                    if len(userinfo) == 0:
+                        loger.info({'code': -1, 'msg': f'用户名不存在'})
+                        return JsonResponse({'code': -1, 'msg': f'用户名不存在'})
                     else:
-                        print('用户名密码错误')
-                        info={'code': -1, 'msg': f'用户名或密码错误'}
+                        sql = f"select id,password,username from users where  user = '{user}'"
+                        loger.info(f'sql:{sql}')
+                        userinfo = mysql_server.get_user_info_list(sql)[0]
+                        loger.info(f'userinfo:{userinfo}')
+                        user_id=userinfo[0]
+                        name=userinfo[2]
+                        dbpwd=decrypt(key,userinfo[1])
+                        print(dbpwd)
+                        if (pwd==dbpwd[1]):
+                            jwt_token = encode_token(user_id, name)
+                            loger.info({'code': 200, 'msg': f'登录成功','jwt_token':jwt_token,'user_info':{'user_id':user_id,'user_name':name,}})
+                            return JsonResponse({'code': 200, 'msg': f'登录成功','jwt_token':jwt_token,'user_info':{'user_id':user_id,'user_name':name,}})
+                        else:
+                            print('密码错误')
+                            return JsonResponse({'code': -1, 'msg': f'用户名或密码错误'})
                 except Exception as e:
                     print(e)
-                    info = {'code': -2, 'msg': f'登录出错{e}'}
-        return JsonResponse(info)
+                    loger.error({'code': -2, 'msg': f'登录出错{e}'})
+                    return JsonResponse({'code': -2, 'msg': f'登录出错{e}'})
 # print(is_time_str(1672986180))
