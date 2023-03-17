@@ -1,0 +1,31 @@
+export default {
+    setup() {
+        const param = reactive({
+            user: "",
+            pwd: "",
+        });
+      // 登录接口
+      const admin_login = () => {
+        login(param).then((res) => {
+              var code = res.code;
+              console.log(code)
+              if (code===200){
+                var msg = res.msg;
+                console.log(msg)
+                ElMessage.success(""+msg)
+                router.push("/");
+              }
+              else{
+                var msg = res.msg;
+                ElMessage.success(""+msg)
+              }
+            }
+        );
+      };
+
+        return {
+            param,
+          admin_login,
+        };
+    },
+};
