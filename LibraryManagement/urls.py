@@ -27,6 +27,7 @@ urlpatterns = [
     path('vercode', views.vercode),
     path('fileInfo',fileUpload.upLoad),
     path('login',views.admin_login),
+    path('finance_info',views.financeInfos),
 ]
 
 from django.conf import settings

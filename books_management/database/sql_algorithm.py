@@ -1,3 +1,6 @@
+
+
+
 def sqlSplicing(tableName,sqllist,page=0,rows=10):
     print(tableName,sqllist)
 
