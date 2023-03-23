@@ -25,7 +25,7 @@ def upLoad(request):
             file_HZ = str(f.name)[-4:]
             encryptStr = encrypt(key,str(f.name)[0:-4])
             if encryptStr[0]==0:
-                file_name = (encryptStr[1]+file_HZ).replace("/", "").replace("\\", "")
+                file_name = (encryptStr[1]+file_HZ).replace("/", "").replace("\\", "").replace("=", "")
                 filepath = os.path.join(settings.MEDIA_ROOT,file_name)
                 print(filepath)
                 with open(filepath, 'ab') as fp:
