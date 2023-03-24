@@ -18,7 +18,7 @@ def get_user_info_list(sql):
 def column_name(table_name):
     conn = return_coon()
     cur = conn.cursor()
-    sql = f"select COLUMN_NAME from information_schema.COLUMNS where table_name = '{table_name}'"
+    sql = f"select COLUMN_NAME from information_schema.COLUMNS where table_name = '{table_name}' order by ordinal_position asc"
     cur.execute(sql)
     data = []
     for field in cur.fetchall():
