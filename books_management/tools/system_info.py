@@ -7,7 +7,7 @@ from books_management.tools.jwt_token import decode_token
 def disk_usage(path):
     DiskInfo = psutil.disk_usage(path)
     disk_info = {}
-    disk_info['disk_total'] = int(DiskInfo.total / 1024 / 1024 / 1024)
+    disk_info['disk_total'] = int(DiskInfo.total / 1024 / 1024 / 1024)  #磁盘总量
     disk_info['disk_used'] = int(DiskInfo.used / 1024 / 1024 / 1024)
     disk_info['disk_free'] = int(DiskInfo.free / 1024 / 1024 / 1024)
     disk_info['disk_percent'] = DiskInfo.percent
