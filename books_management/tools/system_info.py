@@ -48,12 +48,12 @@ def system_info(request):
                 '''
                 RAM 内存信息
                 '''
-                mem = psutil.virtual_memory()
-                ram_total = round(float(mem.total) / 1024 / 1024 /1024, 2)  # 系统总计内存
+                ram = psutil.virtual_memory()
+                ram_total = round(float(ram.total) / 1024 / 1024 /1024, 2)  # 系统总计内存
 
-                ram_used =round(float(mem.used) / 1024 / 1024 /1024, 2)  # 系统已经使用内存
+                ram_used =round(float(ram.used) / 1024 / 1024 /1024, 2)  # 系统已经使用内存
 
-                ram_free =round(float(mem.free) / 1024 / 1024 /1024, 2)  # 系统空闲内存
+                ram_free =round(float(ram.free) / 1024 / 1024 /1024, 2)  # 系统空闲内存
 
 
 
