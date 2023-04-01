@@ -8,9 +8,9 @@ def disk_usage(path):
     DiskInfo = psutil.disk_usage(path)
     disk_info = {}
     disk_info['disk_total'] = int(DiskInfo.total / 1024 / 1024 / 1024)  #磁盘总量
-    disk_info['disk_used'] = int(DiskInfo.used / 1024 / 1024 / 1024)  #磁盘剩余容量
-    disk_info['disk_free'] = int(DiskInfo.free / 1024 / 1024 / 1024)
-    disk_info['disk_percent'] = DiskInfo.percent
+    disk_info['disk_used'] = int(DiskInfo.used / 1024 / 1024 / 1024)  #磁盘使用量
+    disk_info['disk_free'] = int(DiskInfo.free / 1024 / 1024 / 1024)  #磁盘剩余容量
+    disk_info['disk_percent'] = DiskInfo.percent  #磁盘使用百分比
     return disk_info
 
 def system_info(request):
