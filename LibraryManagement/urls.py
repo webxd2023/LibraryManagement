@@ -17,6 +17,7 @@ from django.contrib import admin
 from django.urls import path
 from books_management import views
 from books_management.tools import fileUpload
+from books_management.tools import system_info
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -28,6 +29,7 @@ urlpatterns = [
     path('fileInfo',fileUpload.upLoad),
     path('login',views.admin_login),
     path('finance_info',views.financeInfos),
+    path('systemInfo',system_info.system_info),
 ]
 
 from django.conf import settings
