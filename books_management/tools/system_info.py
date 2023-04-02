@@ -1,3 +1,5 @@
+import platform
+
 import psutil
 from django.http import JsonResponse, HttpResponse
 from books_management.tools import cpu_info
@@ -54,8 +56,19 @@ def system_info(request):
                 ram_used =round(float(RAM.used) / 1024 / 1024 /1024, 2)  # 系统已经使用内存
 
                 ram_free =round(float(RAM.free) / 1024 / 1024 /1024, 2)  # 系统空闲内存
-
-
+                '''
+                osInfo 操作系统信息
+                '''
+                os_sname = platform.platform()  #系统名称及版本号
+                os_arnum = platform.architecture()[0]  #系统位数
+                os_type = platform.machine()   #系统类型
+                net_name = platform.node()  #计算机网络名称
+                os_info ={
+                    'os_sname':os_sname,
+                    'os_arnum':os_arnum,
+                    'os_type':os_type,
+                    'net_name':net_name
+                }
 
                 disk_infos = {
                     'disk_info_list':disk_info_list,
@@ -78,6 +91,7 @@ def system_info(request):
                 sys_info['data']['disk_info'] = disk_infos
                 sys_info['data']['cpu_info'] = cpu_infos
                 sys_info['data']['ram_info'] = ram_infos
+                sys_info['data']['os_info'] = os_info
                 return JsonResponse(sys_info)
             except Exception as e:
                 sys_infos={
