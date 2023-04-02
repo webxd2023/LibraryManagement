@@ -31,14 +31,14 @@ def system_info(request):
                 '''
                 DISK  磁盘信息
                 '''
-                disk_partitioning = psutil.disk_partitions()  # 磁盘分区信息
+                disk_partitioning = list(psutil.disk_partitions())  # 磁盘分区信息
                 disk_info_list = []
                 for u in disk_partitioning:
                     print(u.fstype)
                     disk_Info = disk_usage(f'{u.mountpoint}')  # 磁盘使用情况
 
                     disk_map = {
-                        'disk_path':u.mountpoint,
+                        'disk_path':u.mountpoint[0],
                         'disk_fstype':u.fstype,
                         'disk_usage_info':disk_Info
                     }
@@ -78,12 +78,18 @@ def system_info(request):
                 sys_info['data']['disk_info'] = disk_infos
                 sys_info['data']['cpu_info'] = cpu_infos
                 sys_info['data']['ram_info'] = ram_infos
+                return JsonResponse(sys_info)
             except Exception as e:
-                sys_info['status'] = 403
-                sys_info['data'] = {'error_msg':e}
+                sys_infos={
+                    'status':403,
+                    'data':{
+                        'error_msg':f'获取系统信息出错-->{e}'
+                    }
+                }
+                return JsonResponse(sys_infos)
         else:
             sys_info['status'] = 405
             sys_info['data'] = {'error_msg': '暂无无权限查看'}
-        return JsonResponse(sys_info)
+            return JsonResponse(sys_info)
     else:
         return HttpResponse('method error')

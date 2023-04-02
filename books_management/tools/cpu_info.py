@@ -18,6 +18,7 @@ def get_linux_cpu_speed():
             value = line.split(':')[1].strip()
             value = float(value)
             speed = round(value / 1024, 1)
+            fileinput.close()   # 每打开一次就需要关闭一次
             return "{speed} GHz".format(speed=speed)
 
 
