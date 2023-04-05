@@ -39,7 +39,11 @@ def get_cpu_speed():
         speed = get_linux_cpu_speed()
     if osname in ["Windows", "Win32"]:
         speed = get_windows_cpu_speed()
+    else:
+        speed = "获取系统类型失败"
 
     return speed
+
+
 
 # print(get_cpu_speed())
