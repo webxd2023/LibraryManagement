@@ -13,6 +13,18 @@ def disk_usage(path):
     disk_info['disk_used'] = int(DiskInfo.used / 1024 / 1024 / 1024)  #磁盘使用量
     disk_info['disk_free'] = int(DiskInfo.free / 1024 / 1024 / 1024)  #磁盘剩余容量
     disk_info['disk_percent'] = DiskInfo.percent  #磁盘使用百分比
+    disk_percent_color = "#1fa121"
+
+    if (DiskInfo.percent >= 45.00) and (DiskInfo.percent < 70.00):
+        disk_percent_color = "#1880b6"
+    elif (DiskInfo.percent >= 70.00) and (DiskInfo.percent < 90.00):
+        disk_percent_color = "#e8d20b"
+    elif (DiskInfo.percent >= 90.00):
+        disk_percent_color = "#de1c15"
+    else:
+        disk_percent_color = "#1fa121"
+
+    disk_info['disk_percent_color'] = disk_percent_color
     return disk_info
 
 def system_info(request):
@@ -28,6 +40,16 @@ def system_info(request):
                 cpu_thread = psutil.cpu_count()  # CPU线程数
                 cpu_physical_core = psutil.cpu_count(logical=False)  # CPU物理核心
                 cpu_percent = psutil.cpu_percent(interval=1)   # CPU使用率
+                cpu_percent_color = "#1fa121"
+                if (cpu_percent >=45.00) and (cpu_percent <70.00):
+                    cpu_percent_color = "#1880b6"
+                elif (cpu_percent >=70.00) and (cpu_percent <90.00):
+                    cpu_percent_color = "#e8d20b"
+                elif (cpu_percent >=90.00):
+                    cpu_percent_color = "#de1c15"
+                else:
+                    cpu_percent_color = "#1fa121"
+
 
 
                 '''
@@ -53,9 +75,22 @@ def system_info(request):
                 RAM = psutil.virtual_memory()
                 ram_total = round(float(RAM.total) / 1024 / 1024 /1024, 2)  # 系统总计内存
 
-                ram_used =round(float(RAM.used) / 1024 / 1024 /1024, 2)  # 系统已经使用内存
+                ram_used = round(float(RAM.used) / 1024 / 1024 /1024, 2)  # 系统已经使用内存
 
-                ram_free =round(float(RAM.free) / 1024 / 1024 /1024, 2)  # 系统空闲内存
+                ram_free = round(float(RAM.free) / 1024 / 1024 /1024, 2)  # 系统空闲内存
+
+                ram_percent = round((ram_used / ram_total) * 100, 2)
+
+                ram_percent_color = "#1fa121"
+                if (ram_percent >= 45.00) and (ram_percent < 70.00):
+                    ram_percent_color = "#1880b6"
+                elif (ram_percent >= 70.00) and (ram_percent < 90.00):
+                    ram_percent_color = "#e8d20b"
+                elif (ram_percent >= 90.00):
+                    ram_percent_color = "#de1c15"
+                else:
+                    ram_percent_color = "#1fa121"
+
                 '''
                 osInfo 操作系统信息
                 '''
@@ -77,14 +112,16 @@ def system_info(request):
                     'cpu_thread': cpu_thread,
                     'cpu_physical_core': cpu_physical_core,
                     'cpu_freq':cpu_info.get_cpu_speed(),
-                    'cpu_percent':f'{cpu_percent}%'
+                    'cpu_percent':cpu_percent,
+                    "cpu_percent_color":cpu_percent_color
                 }
 
                 ram_infos = {
                     'ram_total':ram_total,
                     'ram_used':ram_used,
                     'ram_free':ram_free,
-                    'ram_percent':f'{round((ram_used/ram_total)*100,2)}%'
+                    'ram_percent':ram_percent,
+                    'ram_percent_color':ram_percent_color
                 }
                 sys_info['status'] = 200
                 sys_info['data'] = {}
