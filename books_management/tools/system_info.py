@@ -12,14 +12,15 @@ def disk_usage(path):
     disk_info['disk_total'] = int(DiskInfo.total / 1024 / 1024 / 1024)  #磁盘总量
     disk_info['disk_used'] = int(DiskInfo.used / 1024 / 1024 / 1024)  #磁盘使用量
     disk_info['disk_free'] = int(DiskInfo.free / 1024 / 1024 / 1024)  #磁盘剩余容量
-    disk_info['disk_percent'] = DiskInfo.percent  #磁盘使用百分比
+    disk_percent = DiskInfo.percent
+    disk_info['disk_percent'] = disk_percent  #磁盘使用百分比
     disk_percent_color = "#1fa121"
 
-    if (DiskInfo.percent >= 45.00) and (DiskInfo.percent < 70.00):
+    if (disk_percent >= 45.00) and (disk_percent < 70.00):
         disk_percent_color = "#1880b6"
-    elif (DiskInfo.percent >= 70.00) and (DiskInfo.percent < 90.00):
+    elif (disk_percent >= 70.00) and (disk_percent < 90.00):
         disk_percent_color = "#e8d20b"
-    elif (DiskInfo.percent >= 90.00):
+    elif (disk_percent >= 90.00):
         disk_percent_color = "#de1c15"
     else:
         disk_percent_color = "#1fa121"
@@ -39,7 +40,9 @@ def system_info(request):
                 '''
                 cpu_thread = psutil.cpu_count()  # CPU线程数
                 cpu_physical_core = psutil.cpu_count(logical=False)  # CPU物理核心
-                cpu_percent = psutil.cpu_percent(interval=1)   # CPU使用率
+                # cpu_percent = psutil.cpu_percent(interval=1)   # CPU使用率
+                cpu_percent = psutil.cpu_percent()
+                cpu_percent = 70.00
                 cpu_percent_color = "#1fa121"
                 if (cpu_percent >=45.00) and (cpu_percent <70.00):
                     cpu_percent_color = "#1880b6"
@@ -58,7 +61,9 @@ def system_info(request):
                 disk_partitioning = list(psutil.disk_partitions())  # 磁盘分区信息
                 disk_info_list = []
                 for u in disk_partitioning:
-                    print(u.fstype)
+                    # print(u.fstype)
+                    if not u.mountpoint:
+                        continue
                     disk_Info = disk_usage(f'{u.mountpoint}')  # 磁盘使用情况
 
                     disk_map = {
