@@ -44,6 +44,25 @@ def get_cpu_speed():
 
     return speed
 
+def cpu_model():
+    import wmi
+    cpuinfo = wmi.WMI()
+    cpu_info_list = []
+    for cpu in cpuinfo.Win32_Processor():
+        # print("您的CPU序列号为:" + cpu.ProcessorId.strip()) # BFEBFBFF0999906C1
+        # print("您的CPU名称为:" + cpu.Name) # 11th Gen Intel(R) Core(TM) i7-1165G7 @ 2.80GHz
+        # print("您的CPU已使用:%d%%" % cpu.LoadPercentage) # 17%
+        # print("您的CPU核心数为:%d" % cpu.NumberOfCores) # 4
+        # print("您的CPU时钟频率为:%d" % cpu.MaxClockSpeed) # 1690
+        jsontext = {
+            'cpu_model_name': cpu.Name,
+            'cpu_percent': round(cpu.LoadPercentage, 2)
+        }
+        cpu_info_list.append(jsontext)
+    return cpu_info_list
+    # print(cpu_info_list)
+
+# cpu_model()
 
 
 # print(get_cpu_speed())

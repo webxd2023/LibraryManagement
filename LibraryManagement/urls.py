@@ -18,6 +18,7 @@ from django.urls import path
 from books_management import views
 from books_management.tools import fileUpload
 from books_management.tools import system_info
+from books_management.tools import net_work
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -30,6 +31,7 @@ urlpatterns = [
     path('login',views.admin_login),
     path('finance_info',views.financeInfos),
     path('systemInfo',system_info.system_info),
+    path('network_info',net_work.getNet),
 ]
 
 from django.conf import settings

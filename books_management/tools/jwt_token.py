@@ -29,7 +29,7 @@ def decode_token(encoded_jwt):
       encoded_jwt = encoded_jwt.replace('"', '')
     res = jwt.decode(encoded_jwt,key, algorithms='HS512', options={"verify_signature": True})
     auth_time=res['exp']
-    print(auth_time)
+    # print(auth_time)
     user_id = res['user_id']
     user_name = res['user_name']
     if auth_time<=nowTime():

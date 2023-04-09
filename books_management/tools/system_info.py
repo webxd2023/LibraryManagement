@@ -1,5 +1,4 @@
 import platform
-
 import psutil
 from django.http import JsonResponse, HttpResponse
 from books_management.tools import cpu_info
@@ -38,11 +37,14 @@ def system_info(request):
                 '''
                 CPU  处理器信息
                 '''
+                cpu_name = platform.processor()  # CPU型号
+                # print(cpu_name)
                 cpu_thread = psutil.cpu_count()  # CPU线程数
                 cpu_physical_core = psutil.cpu_count(logical=False)  # CPU物理核心
-                # cpu_percent = psutil.cpu_percent(interval=1)   # CPU使用率
-                cpu_percent = psutil.cpu_percent()
-                cpu_percent = 70.00
+                cpu_percent = psutil.cpu_percent(interval=1)   # CPU使用率
+                # cpu_percent = cpu_model()[0]['cpu_percent']
+                # cpu_model_name = cpu_model()[0]['cpu_model_name']
+                # cpu_percent = 70.00
                 cpu_percent_color = "#1fa121"
                 if (cpu_percent >=45.00) and (cpu_percent <70.00):
                     cpu_percent_color = "#1880b6"
@@ -114,6 +116,7 @@ def system_info(request):
                     'disk_info_list':disk_info_list,
                 }
                 cpu_infos = {
+                    # 'cpu_name':cpu_model_name,
                     'cpu_thread': cpu_thread,
                     'cpu_physical_core': cpu_physical_core,
                     'cpu_freq':cpu_info.get_cpu_speed(),
