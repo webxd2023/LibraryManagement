@@ -57,6 +57,7 @@ def getNet(request):
     if request.method == 'GET':
         jwt_token = request.META.get("HTTP_AUTHORIZATION")
         auth = decode_token(jwt_token)
+        # auth=[False,True]
         net_info ={}
         if auth[0] == True:
             sent_before = psutil.net_io_counters().bytes_sent  # 已发送的流量

@@ -31,6 +31,7 @@ def system_info(request):
     if request.method == 'GET':
         jwt_token = request.META.get("HTTP_AUTHORIZATION")
         auth = decode_token(jwt_token)
+        # auth = [False, True]
         sys_info = {}
         if auth[0] == True:
             try:

@@ -31,17 +31,17 @@ def get_windows_cpu_speed():
 
 
 def get_cpu_speed():
+    # print(platform.processor())  # 计算机处理器信息
     osname = platform.system()  # 获取操作系统的名称
     speed = ''
     if osname == "Darwin":
         speed = get_mac_cpu_speed()
-    if osname == "Linux":
+    elif osname == "Linux":
         speed = get_linux_cpu_speed()
-    if osname in ["Windows", "Win32"]:
+    elif osname in ["Windows", "Win32"]:
         speed = get_windows_cpu_speed()
     else:
         speed = "获取系统类型失败"
-
     return speed
 
 def cpu_model():
@@ -66,3 +66,5 @@ def cpu_model():
 
 
 # print(get_cpu_speed())
+if __name__ =="__main__":
+    get_cpu_speed()
